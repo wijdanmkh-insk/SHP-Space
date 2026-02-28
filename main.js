@@ -1,4 +1,3 @@
-//Debris & Game
 const canvas = document.getElementById("debris");
 const ctx = canvas.getContext("2d");
 const space = document.getElementById("space");
@@ -17,7 +16,6 @@ const popupYears = document.getElementById("popup-years");
 const popupUsers = document.getElementById("popup-users");
 const popupClose = document.getElementById("popup-close");
 
-// Collision popup elements
 const popupCollision = document.getElementById("popup-collision");
 const popupCollisionClose = document.getElementById("popup-collision-close");
 const collisionAlias1 = document.getElementById("collision-alias-1");
@@ -31,7 +29,6 @@ const collisionCountry2 = document.getElementById("collision-country-2");
 const collisionPurpose2 = document.getElementById("collision-purpose-2");
 const collisionYear2 = document.getElementById("collision-year-2");
 
-// Time control elements
 const timeControl = document.getElementById("time-control");
 const currentYearDisplay = document.getElementById("current-year");
 const timeToggleBtn = document.getElementById("time-toggle");
@@ -39,7 +36,6 @@ const speedSlow = document.getElementById("speed-slow");
 const speedNormal = document.getElementById("speed-normal");
 const speedFast = document.getElementById("speed-fast");
 
-// Satellite panel elements
 const satellitePanel = document.getElementById("satellite-panel");
 const panelToggle = document.getElementById("panel-toggle");
 const panelDropdown = document.getElementById("panel-dropdown");
@@ -58,9 +54,8 @@ let dragOffset = { x: 0, y: 0 };
 let lastMousePos = { x: 0, y: 0 };
 const MAX_SATELLITES = 8;
 
-// Time system
 let currentYear = 2020;
-let timeSpeed = 5; // Years per second
+let timeSpeed = 5;
 let lastTimeUpdate = Date.now();
 let isTimePaused = false;
 
@@ -76,13 +71,12 @@ const rocks = [];
 function rand(min, max){ return Math.random() * (max - min) + min; }
 
 function makeRock(){
-  const r = rand(6, 28); // ukuran
+  const r = rand(6, 28);
   const x = rand(0, canvas.clientWidth);
   const y = rand(0, canvas.clientHeight);
   const vx = rand(-0.2, 0.2);
   const vy = rand(0.1, 0.6);
 
-  // bikin polygon "batu" (organik)
   const points = [];
   const n = Math.floor(rand(7, 12));
   for (let i=0; i<n; i++){
@@ -116,7 +110,6 @@ function drawRock(rock){
   ctx.translate(rock.x, rock.y);
   ctx.rotate(rock.rot);
 
-  // warna batu (tanpa asset)
   const base = Math.floor(rock.shade * 255);
   ctx.fillStyle = `rgb(${base},${base},${base + 15})`;
   ctx.strokeStyle = `rgba(255,255,255,0.06)`;
@@ -131,7 +124,6 @@ function drawRock(rock){
   ctx.fill();
   ctx.stroke();
 
-  // highlight kecil biar lebih 3D
   ctx.globalAlpha = 0.12;
   ctx.fillStyle = "white";
   ctx.beginPath();
@@ -141,9 +133,6 @@ function drawRock(rock){
   ctx.restore();
 }
 
-// ========== GAME OBJECTS ==========
-
-// Create Meteor
 function createMeteor() {
   const r = 25;
   const points = [];
@@ -170,29 +159,22 @@ function createMeteor() {
   };
 }
 
-// Create Satellite
-// Create Satellite
 function createSatellite(x, y, data, index) {
-  // Extract year from multiple possible fields
   let LaunchYear = 'Unknown';
   
-  // Priority 1: Direct Released/LaunchYear field
   if (data.Released) {
     LaunchYear = data.Released;
   } else if (data.LaunchYear) {
     LaunchYear = data.LaunchYear;
   } 
-  // Priority 2: Parse from "Date of Launch" (format: MM/DD/YYYY or DD/MM/YYYY)
   else if (data["Date of Launch"]) {
     const dateStr = data["Date of Launch"].toString().trim();
-    // Try different formats
     const dateParts = dateStr.split('/');
     if (dateParts.length === 3) {
-      LaunchYear = dateParts[2]; // YYYY is usually last
+      LaunchYear = dateParts[2];
     }
   }
   
-  // Calculate expiry year
   const launchYearNum = parseInt(LaunchYear) || currentYear;
   const lifetimeYears = parseFloat(data["Expected Lifetime (yrs.)"]) || 10;
   const expiryYear = launchYearNum + lifetimeYears;
@@ -219,7 +201,6 @@ function createSatellite(x, y, data, index) {
   };
 }
 
-// Create debris particles
 function createDebris(x, y, count, satellite) {
   for (let i = 0; i < count; i++) {
     const angle = rand(0, Math.PI * 2);
@@ -237,7 +218,6 @@ function createDebris(x, y, count, satellite) {
   }
 }
 
-// Draw Meteor
 function drawMeteor() {
   if (!meteor) return;
   
@@ -245,14 +225,12 @@ function drawMeteor() {
   ctx.translate(meteor.x, meteor.y);
   ctx.rotate(meteor.rot);
 
-  // Meteor glow
   const gradient = ctx.createRadialGradient(0, 0, 0, 0, 0, meteor.r * 1.5);
   gradient.addColorStop(0, 'rgba(255, 100, 50, 0.4)');
   gradient.addColorStop(1, 'rgba(255, 100, 50, 0)');
   ctx.fillStyle = gradient;
   ctx.fillRect(-meteor.r * 1.5, -meteor.r * 1.5, meteor.r * 3, meteor.r * 3);
 
-  // Meteor body
   ctx.fillStyle = 'rgb(180, 90, 60)';
   ctx.strokeStyle = 'rgba(255, 150, 100, 0.3)';
   ctx.lineWidth = 2;
@@ -268,7 +246,6 @@ function drawMeteor() {
 
   ctx.restore();
   
-  // Trail effect saat bergerak cepat
   if (Math.abs(meteor.vx) > 1 || Math.abs(meteor.vy) > 1) {
     ctx.save();
     ctx.globalAlpha = 0.2;
@@ -284,20 +261,17 @@ function drawMeteor() {
   }
 }
 
-// Draw Satellite
 function drawSatellite(sat) {
   ctx.save();
   ctx.translate(sat.x, sat.y);
   ctx.rotate(sat.rot);
 
-  // Body
   ctx.fillStyle = 'rgb(180, 200, 220)';
   ctx.strokeStyle = 'rgb(100, 120, 140)';
   ctx.lineWidth = 2;
   ctx.fillRect(-15, -10, 30, 60);
   ctx.strokeRect(-15, -10, 30, 60);
 
-  // Solar panels
   ctx.fillStyle = 'rgb(50, 80, 120)';
   ctx.fillRect(-25, -8, 8, 16);
   ctx.fillRect(17, -8, 8, 16);
@@ -306,7 +280,6 @@ function drawSatellite(sat) {
   ctx.fillRect(-35, -8, 8, 16);
   ctx.fillRect(27, -8, 8, 16);
   
-  // Panel lines
   ctx.strokeStyle = 'rgb(100, 150, 200)';
   ctx.lineWidth = 1;
   for (let i = 0; i < 3; i++) {
@@ -346,7 +319,6 @@ function drawSatellite(sat) {
   ctx.lineTo(0, -18);
   ctx.stroke();
   
-  // Top Antenna
   ctx.fillStyle = 'rgb(200, 50, 50)';
   ctx.beginPath();
   ctx.arc(0, -25, 3, 0, Math.PI * 2);
@@ -355,7 +327,6 @@ function drawSatellite(sat) {
   ctx.restore();
 }
 
-// Draw debris
 function drawDebris(debris) {
   ctx.save();
   ctx.globalAlpha = debris.life;
@@ -368,7 +339,6 @@ function drawDebris(debris) {
   ctx.restore();
 }
 
-// Check if point is inside meteor
 function isPointInMeteor(x, y) {
   if (!meteor) return false;
   const dx = x - meteor.x;
@@ -376,7 +346,6 @@ function isPointInMeteor(x, y) {
   return Math.sqrt(dx * dx + dy * dy) < meteor.r;
 }
 
-// Collision detection
 function checkCollision(obj1, obj2) {
   const dx = obj1.x - obj2.x;
   const dy = obj1.y - obj2.y;
@@ -384,7 +353,6 @@ function checkCollision(obj1, obj2) {
   return distance < (obj1.r + obj2.r);
 }
 
-// Collision physics
 function handleCollision(meteor, satellite) {
   let countSat = 0;
   const dx = satellite.x - meteor.x;
@@ -413,30 +381,24 @@ function handleCollision(meteor, satellite) {
   satellite.destroyed = true;
   createDebris(satellite.x, satellite.y, 15, satellite);
   
-  // Update counter
   destroyedCount++;
   countSat.textContent = destroyedCount;
   
-  // Show detailed popup
   showPopup(satellite);
   
-  // Spawn satelit baru untuk replace
   spawnNewSatellite(satellite);
 }
 
-// Initialize satellites from JSON
 async function loadSatellitesData() {
   try {
     const response = await fetch('satellites.json');
     satellitesData = await response.json();
     
-    // Shuffle data untuk random selection
     shuffleArray(satellitesData);
     availableSatellites = [...satellitesData];
     
   } catch (error) {
     console.error('Error loading satellites data:', error);
-    // Fallback data jika JSON gagal load
     satellitesData = [
       { Alias: 'GPS-IIF', CountryOG: 'USA', Purpose: 'Navigation', users: 'System failure!', "Date of Launch": "02/05/2016" },
       { Alias: 'BeiDou-3', CountryOG: 'China', Purpose: 'Navigation', users: '系统崩溃！', "Date of Launch": "11/05/2019" },
@@ -449,7 +411,6 @@ async function loadSatellitesData() {
   }
 }
 
-// Shuffle array helper
 function shuffleArray(array) {
   for (let i = array.length - 1; i > 0; i--) {
     const j = Math.floor(Math.random() * (i + 1));
@@ -457,22 +418,18 @@ function shuffleArray(array) {
   }
 }
 
-// Get random satellite data
 function getRandomSatelliteData() {
   if (availableSatellites.length === 0) {
-    // Kalau habis, reset pool dan shuffle lagi
     availableSatellites = [...satellitesData];
     shuffleArray(availableSatellites);
   }
   return availableSatellites.pop();
 }
 
-// Initialize satellites
 function initSatellites() {
   satellites = [];
   usedIndices = [];
   
-  // Generate MAX_SATELLITES (8) satelit random
   const numSatellites = Math.min(MAX_SATELLITES, satellitesData.length);
   
   for (let i = 0; i < numSatellites; i++) {
@@ -486,32 +443,29 @@ function initSatellites() {
   }
 }
 
-// Spawn new satellite to replace destroyed one
 function spawnNewSatellite(oldSatellite) {
-  // Delay spawn sedikit untuk smooth transition
   setTimeout(() => {
     if (satellites.length >= MAX_SATELLITES) return;
     
     const satData = getRandomSatelliteData();
     
-    // Spawn di posisi random di edge layar
-    const edge = Math.floor(rand(0, 4)); // 0=top, 1=right, 2=bottom, 3=left
+    const edge = Math.floor(rand(0, 4));
     let x, y;
     
     switch(edge) {
-      case 0: // top
+      case 0:
         x = rand(50, canvas.clientWidth - 50);
         y = -50;
         break;
-      case 1: // right
+      case 1:
         x = canvas.clientWidth + 50;
         y = rand(50, canvas.clientHeight - 50);
         break;
-      case 2: // bottom
+      case 2:
         x = rand(50, canvas.clientWidth - 50);
         y = canvas.clientHeight + 50;
         break;
-      case 3: // left
+      case 3:
         x = -50;
         y = rand(50, canvas.clientHeight - 50);
         break;
@@ -519,7 +473,6 @@ function spawnNewSatellite(oldSatellite) {
     
     const newSat = createSatellite(x, y, satData, satellites.length);
     
-    // Bergerak ke arah center
     const centerX = canvas.clientWidth / 2;
     const centerY = canvas.clientHeight / 2;
     const dx = centerX - x;
@@ -530,10 +483,9 @@ function spawnNewSatellite(oldSatellite) {
     newSat.vy = (dy / distance) * rand(0.3, 0.6);
     
     satellites.push(newSat);
-  }, 2000); // 2 detik delay
+  }, 2000);
 }
 
-// Dialog system
 function showDialog(text, duration = 3000) {
   dialogText.textContent = text;
   dialog.classList.add('show');
@@ -545,9 +497,7 @@ function showDialog(text, duration = 3000) {
   }
 }
 
-// Popup system
 function showPopup(satellite) {
-  // Map negara ke emoji bendera
   const countryFlags = {
     'USA': '🇺🇸',
     'China': '🇨🇳',
@@ -602,7 +552,6 @@ function hidePopup() {
   popup.classList.remove('show');
 }
 
-// Purpose-based dialog messages
 function getPurposeMessage(purpose) {
   const messages = {
     'Communications': "Something's wrong with our connection!",
@@ -617,7 +566,6 @@ function getPurposeMessage(purpose) {
     'Surveillance': "Surveillance capabilities disrupted!"
   };
   
-  // Find matching purpose (case-insensitive, partial match)
   for (const [key, msg] of Object.entries(messages)) {
     if (purpose && purpose.toLowerCase().includes(key.toLowerCase())) {
       return msg;
@@ -627,7 +575,6 @@ function getPurposeMessage(purpose) {
   return "Satellite system malfunction detected!";
 }
 
-// Collision popup system
 function showCollisionPopup(sat1, sat2) {
   const countryFlags = {
     'USA': '🇺🇸', 'China': '🇨🇳', 'Russia': '🇷🇺', 'India': '🇮🇳',
@@ -643,21 +590,18 @@ function showCollisionPopup(sat1, sat2) {
     'Poland': '🇵🇱', 'Ukraine': '🇺🇦', 'Vietnam': '🇻🇳'
   };
   
-  // Satellite 1
   collisionAlias1.textContent = sat1.Alias || 'Unknown';
   collisionFlag1.textContent = countryFlags[sat1.CountryOG] || '🌍';
   collisionCountry1.textContent = sat1.CountryOG || 'Unknown';
   collisionPurpose1.textContent = sat1.Purpose || 'Unknown';
   collisionYear1.textContent = sat1.Released || 'Unknown';
   
-  // Satellite 2
   collisionAlias2.textContent = sat2.Alias || 'Unknown';
   collisionFlag2.textContent = countryFlags[sat2.CountryOG] || '🌍';
   collisionCountry2.textContent = sat2.CountryOG || 'Unknown';
   collisionPurpose2.textContent = sat2.Purpose || 'Unknown';
   collisionYear2.textContent = sat2.Released || 'Unknown';
   
-  // Show dialog based on purposes
   const msg1 = getPurposeMessage(sat1.Purpose);
   const msg2 = getPurposeMessage(sat2.Purpose);
   const combinedMsg = `${msg1} | ${msg2}`;
@@ -670,7 +614,6 @@ function hideCollisionPopup() {
   popupCollision.classList.remove('show');
 }
 
-// Check satellite-to-satellite collision
 function checkSatelliteCollisions() {
   for (let i = 0; i < satellites.length; i++) {
     const sat1 = satellites[i];
@@ -687,7 +630,6 @@ function checkSatelliteCollisions() {
   }
 }
 
-// Handle satellite-to-satellite collision
 function handleSatelliteCollision(sat1, sat2) {
   const dx = sat2.x - sat1.x;
   const dy = sat2.y - sat1.y;
@@ -712,47 +654,39 @@ function handleSatelliteCollision(sat1, sat2) {
   sat2.vx += impulse * nx / sat2.mass;
   sat2.vy += impulse * ny / sat2.mass;
   
-  // Destroy both satellites
   sat1.destroyed = true;
   sat2.destroyed = true;
   
   createDebris(sat1.x, sat1.y, 20, sat1);
   createDebris(sat2.x, sat2.y, 20, sat2);
   
-  // Update counter (2 satellites destroyed)
   destroyedCount += 2;
   countSat.textContent = destroyedCount;
   
-  // Show collision popup
   showCollisionPopup(sat1, sat2);
   
-  // Spawn 2 new satellites
   spawnNewSatellite(sat1);
   spawnNewSatellite(sat2);
 }
 
-// Update time system
 function updateTime() {
   if (isTimePaused) return;
   
   const now = Date.now();
-  const deltaTime = (now - lastTimeUpdate) / 1000; // seconds
+  const deltaTime = (now - lastTimeUpdate) / 1000;
   lastTimeUpdate = now;
   
-  // Increment year based on speed
   currentYear += deltaTime * timeSpeed;
   currentYearDisplay.textContent = Math.floor(currentYear);
 }
 
-// Check satellite lifetime expiry
 function checkSatelliteExpiry() {
   if (isTimePaused) return;
   
   for (let i = satellites.length - 1; i >= 0; i--) {
     const sat = satellites[i];
     if (!sat.destroyed && currentYear >= sat.ExpiryYear) {
-      // Satellite expired, make it fall
-      sat.vy += 0.5; // Increase downward velocity
+      sat.vy += 0.5;
       sat.destroyed = true;
       createDebris(sat.x, sat.y, 10, sat);
       
@@ -766,7 +700,6 @@ function checkSatelliteExpiry() {
   }
 }
 
-// Update satellite panel list
 function updateSatellitePanel() {
   panelList.innerHTML = '';
   
@@ -796,7 +729,6 @@ function updateSatellitePanel() {
   });
 }
 
-// Toggle panel dropdown
 panelToggle.addEventListener('click', () => {
   panelDropdown.classList.toggle('open');
   panelToggle.textContent = panelDropdown.classList.contains('open') 
@@ -804,7 +736,6 @@ panelToggle.addEventListener('click', () => {
     : 'Active Satellites ▼';
 });
 
-// Speed control buttons
 speedSlow.addEventListener('click', () => {
   timeSpeed = 1;
   document.querySelectorAll('.speed-btn').forEach(btn => btn.classList.remove('active'));
@@ -823,7 +754,6 @@ speedFast.addEventListener('click', () => {
   speedFast.classList.add('active');
 });
 
-// Start game
 async function startGame() {
   gameStarted = true;
   menu.classList.add('hide');
@@ -832,14 +762,12 @@ async function startGame() {
   timeControl.classList.add('show');
   satellitePanel.classList.add('show');
   
-  // Load satellite data first
   await loadSatellitesData();
   
   meteor = createMeteor();
   destroyedCount = 0;
   countSat.textContent = destroyedCount;
   
-  // Initialize time
   currentYear = 2020;
   lastTimeUpdate = Date.now();
   currentYearDisplay.textContent = currentYear;
@@ -862,7 +790,6 @@ function tick(){
     rock.y += rock.vy;
     rock.rot += rock.vr;
 
-    // respawn kalau keluar layar (dari atas lagi)
     if (rock.y - rock.r > canvas.clientHeight + 20){
       rock.y = -rand(20, 200);
       rock.x = rand(0, canvas.clientWidth);
@@ -873,30 +800,24 @@ function tick(){
     drawRock(rock);
   }
   
-  // Game logic
   if (gameStarted && meteor) {
-    // Update time
     updateTime();
     
-    // Check satellite expiry every frame
     checkSatelliteExpiry();
     
-    // Update satellite panel every 30 frames (~0.5 second)
     if (Math.floor(Date.now() / 500) % 1 === 0) {
       updateSatellitePanel();
     }
     
-    // Update meteor
     if (!isDragging) {
       meteor.x += meteor.vx;
       meteor.y += meteor.vy;
-      meteor.vx *= 0.98;  // friction
+      meteor.vx *= 0.98;
       meteor.vy *= 0.98;
     }
     
     meteor.rot += meteor.vr;
     
-    // Bounds
     if (meteor.x < meteor.r) {
       meteor.x = meteor.r;
       meteor.vx *= -0.5;
@@ -914,13 +835,10 @@ function tick(){
       meteor.vy *= -0.5;
     }
     
-    // Check random satellite-to-satellite collisions
-    // Random chance: 0.3% per frame (~1 collision every 5-10 seconds)
     if (Math.random() < 0.003) {
       checkSatelliteCollisions();
     }
     
-    // Update satellites
     for (let i = satellites.length - 1; i >= 0; i--) {
       const sat = satellites[i];
       
@@ -929,7 +847,6 @@ function tick(){
         sat.y += sat.vy;
         sat.rot += sat.vr;
         
-        // Bounds wrapping
         if (sat.x < -50) sat.x = canvas.clientWidth + 50;
         if (sat.x > canvas.clientWidth + 50) sat.x = -50;
         if (sat.y < -50) sat.y = canvas.clientHeight + 50;
@@ -941,9 +858,8 @@ function tick(){
         
         drawSatellite(sat);
       } else {
-        // Remove destroyed satellites setelah beberapa frame
         if (!sat.removeTimer) {
-          sat.removeTimer = 60; // 1 detik (60 frames)
+          sat.removeTimer = 60;
         }
         sat.removeTimer--;
         if (sat.removeTimer <= 0) {
@@ -952,7 +868,6 @@ function tick(){
       }
     }
     
-    // Update debris
     for (let i = debrisParticles.length - 1; i >= 0; i--) {
       const debris = debrisParticles[i];
       debris.x += debris.vx;
@@ -974,7 +889,6 @@ function tick(){
   requestAnimationFrame(tick);
 }
 
-// Mouse/Touch events - DRAG METEOR
 function getMousePos(e) {
   const rect = canvas.getBoundingClientRect();
   return {
@@ -1002,7 +916,6 @@ canvas.addEventListener("mousemove", (e) => {
   const pos = getMousePos(e);
   
   if (isDragging) {
-    // Calculate velocity from mouse movement
     const dx = pos.x - lastMousePos.x;
     const dy = pos.y - lastMousePos.y;
     
@@ -1013,7 +926,6 @@ canvas.addEventListener("mousemove", (e) => {
     
     lastMousePos = pos;
   } else {
-    // Change cursor when hovering over meteor
     if (isPointInMeteor(pos.x, pos.y)) {
       canvas.style.cursor = 'grab';
     } else {
@@ -1034,7 +946,6 @@ canvas.addEventListener("mouseleave", () => {
   canvas.style.cursor = 'default';
 });
 
-// Touch support
 canvas.addEventListener("touchstart", (e) => {
   if (!gameStarted || !meteor) return;
   
@@ -1080,10 +991,8 @@ canvas.addEventListener("touchend", () => {
   isDragging = false;
 });
 
-// Start button
 startBtn.addEventListener('click', startGame);
 
-// Time toggle button
 timeToggleBtn.addEventListener('click', () => {
   isTimePaused = !isTimePaused;
   
@@ -1093,12 +1002,10 @@ timeToggleBtn.addEventListener('click', () => {
   } else {
     timeToggleBtn.textContent = '⏸ Pause';
     timeToggleBtn.classList.remove('paused');
-    // Reset lastTimeUpdate to prevent time jump
     lastTimeUpdate = Date.now();
   }
 });
 
-// Popup close button
 popupClose.addEventListener('click', hidePopup);
 popupCollisionClose.addEventListener('click', hideCollisionPopup);
 

@@ -40,7 +40,6 @@ html,body {
   letter-spacing: 1px;
 }
 
-/* BUTTON */
 .start-btn{
   font-family: inherit;
   font-size: 28px;
@@ -88,10 +87,9 @@ html,body {
   width: 100%;
   height: 100%;
   pointer-events: none;
-  display: block; /* Memastikan tidak ada gap inline */
+  display: block;
 }
 
-/* DIALOG */
 .dialog {
   position: absolute;
   bottom: 60px;
@@ -123,7 +121,6 @@ html,body {
   line-height: 1.5;
 }
 
-/* GAME STATE */
 .text-container.hide {
   opacity: 0;
   pointer-events: none;
@@ -135,7 +132,6 @@ html,body {
   cursor: crosshair;
 }
 
-/* COUNTER */
 .counter {
   position: absolute;
   top: 30px;
@@ -163,7 +159,6 @@ html,body {
   font-size: 24px;
 }
 
-/* TIME CONTROL */
 .time-control {
   position: absolute;
   top: 30px;
@@ -263,7 +258,6 @@ html,body {
   color: #ffcc66;
 }
 
-/* SATELLITE PANEL */
 .satellite-panel {
   position: absolute;
   top: 30px;
@@ -369,7 +363,6 @@ html,body {
   margin-top: 4px;
 }
 
-/* POPUP */
 .popup {
   position: absolute;
   top: 0;
@@ -487,7 +480,6 @@ html,body {
   transform: translateY(0);
 }
 
-/* COLLISION POPUP */
 .popup-collision {
   position: absolute;
   top: 0;

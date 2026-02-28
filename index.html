@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Space Debris Scenario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <link rel="stylesheet" href="style.css"/>
+    <script src="main.js" defer></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100..800;1,100..800&family=VT323&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div class="container">
+        <div class="space" id="space">
+            <div class="text-container" id="menu">
+                <div class="title">
+                    <div class="title-text">
+                        PhysDebris
+                    </div>
+                    <button class="start-btn" id="start-btn">
+                        Start
+                    </button>
+                </div>
+            </div>
+            <div class="stars"></div>
+            <canvas id="debris"></canvas>
+            <div class="counter" id="counter">
+                Satellites Destroyed: <span id="count-sat">0</span>
+            </div>
+            <div class="time-control" id="time-control">
+                <div class="time-display">
+                    <span class="time-label">Year:</span>
+                    <span id="current-year">2020</span>
+                    <button id="time-toggle" class="time-toggle-btn">⏸ Pause</button>
+                </div>
+                <div class="time-speed">
+                    <button id="speed-slow" class="speed-btn">1x</button>
+                    <button id="speed-normal" class="speed-btn active">5x</button>
+                    <button id="speed-fast" class="speed-btn">10x</button>
+                </div>
+            </div>
+            <div class="satellite-panel" id="satellite-panel">
+                <button class="panel-toggle" id="panel-toggle">
+                    Active Satellites ▼
+                </button>
+                <div class="panel-dropdown" id="panel-dropdown">
+                    <div class="panel-list" id="panel-list">
+                        <!-- Satellite list will be populated here -->
+                    </div>
+                </div>
+            </div>
+            <div class="dialog" id="dialog">
+                <p id="dialog-text"></p>
+            </div>
+            <div class="popup" id="popup">
+                <div class="popup-content">
+                    <h2 id="popup-alias">SATELLITE DESTROYED</h2>
+                    <div class="popup-header-info">
+                        <div class="popup-country-flag">
+                            <span id="popup-flag">🇺🇸</span>
+                            <span id="popup-CountryOG">USA</span>
+                        </div>
+                        <div class="popup-purpose-label" id="popup-Purpose">Navigation</div>
+                    </div>
+                    <div class="popup-section">
+                        <strong>Affected Users:</strong>
+                        <p id="popup-users"></p>
+                    </div>
+                    <div class="popup-section">
+                        <strong>Released Year:</strong>
+                        <p id="popup-years"></p>
+                    </div>
+                    <button class="popup-close" id="popup-close">Continue</button>
+                </div>
+            </div>
+            <div class="popup-collision" id="popup-collision">
+                <div class="popup-collision-content">
+                    <h2>SATELLITE COLLISION DETECTED!</h2>
+                    <div class="satellite-cards-container">
+                        <div class="satellite-card" id="sat-card-1">
+                            <h3 id="collision-alias-1">Satellite 1</h3>
+                            <div class="card-info">
+                                <span id="collision-flag-1">🇺🇸</span>
+                                <span id="collision-country-1">USA</span>
+                            </div>
+                            <div class="card-detail">
+                                <strong>Purpose:</strong>
+                                <p id="collision-purpose-1">Navigation</p>
+                            </div>
+                            <div class="card-detail">
+                                <strong>Year:</strong>
+                                <p id="collision-year-1">2019</p>
+                            </div>
+                        </div>
+                        <div class="collision-icon">💥</div>
+                        <div class="satellite-card" id="sat-card-2">
+                            <h3 id="collision-alias-2">Satellite 2</h3>
+                            <div class="card-info">
+                                <span id="collision-flag-2">🇨🇳</span>
+                                <span id="collision-country-2">China</span>
+                            </div>
+                            <div class="card-detail">
+                                <strong>Purpose:</strong>
+                                <p id="collision-purpose-2">Communication</p>
+                            </div>
+                            <div class="card-detail">
+                                <strong>Year:</strong>
+                                <p id="collision-year-2">2020</p>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="popup-close" id="popup-collision-close">Continue</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>

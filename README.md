@@ -1,5 +1,4 @@
 # PhysDebris
-
 I wonder how the satellites colliding with another satellites or even from its debris. That's why we make a simple app of satellite-colliding simulations, and it's not only limited to collisions, but also we have simulations of satellite lifespans. When it's exceeding its expected lifetime, the satellite itself will fall from the space to prevent collisions and creating more space debris.
 
 We're not playing as a human/spaceman here. But... we're going to play as a space debris. Collide with every satellites we have here and you got who are impacted :DD
@@ -19,3 +18,6 @@ To reduce the resource consumption from the website, we're only able to provide 
 We're using ChatGPT, Gemini, and Claude AI to draft, creating the code, while we're finding those bugs and try to fix it. Those AI's are used to create assets by using js canvas (This is the first time we're using this too. I'm used to draw it by hand) and doing some improvements, to make it look like a satellite (the first iterations didn't give us the right satellite object, so we got to refine it again). Asking commands to AI on how to use ctx canvas, from how to draw it to place it in the right place, since ctx uses coordinates, so we got to reverse-engineering the points.
 
 We also use AI to create the required components, e.g. UI. We planned to create cyber-like UI because we wanted to make it look like a game instead of corporate website. But we found that the UI logic didn't match to us, so instead of waiting (we know about CSS), so instead of iterating to AI that costs token more, we're just changing the code manually, and it's fun. 
+
+# Collaboration
+Thanks to Techbypavy (https://github.com/TechbyPavy) to created, refined, debugging the ideas
